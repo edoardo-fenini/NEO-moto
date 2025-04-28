@@ -87,42 +87,55 @@
 <div id="total"></div>
 
 <button onclick="clearCart()">Svuota Carrello</button>
+<button onclick="proceedToPayment()">Vai al Pagamento</button>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartItemsContainer = document.getElementById("cart-items");
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartItemsContainer = document.getElementById("cart-items");
 
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = "<p>Il tuo carrello è vuoto.</p>";
-    } else {
-        let total = 0;
-        cart.forEach(product => {
-            const productElement = document.createElement("div");
-            productElement.classList.add("cart-item");
-            productElement.innerHTML = `
-                <img src="${product.image}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p>Prezzo: ${product.price}</p>
-            `;
-            cartItemsContainer.appendChild(productElement);
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = "<p>Il tuo carrello è vuoto.</p>";
+        } else {
+            let total = 0;
+            cart.forEach(product => {
+                const productElement = document.createElement("div");
+                productElement.classList.add("cart-item");
+                productElement.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>Prezzo: ${product.price}</p>
+                `;
+                cartItemsContainer.appendChild(productElement);
 
-            // 🔥 Parsing sicuro del prezzo (rimuove € e . nei decimali)
-            const numericPrice = parseFloat(
-                product.price.replace("€", "").replace(".", "").replace(",", ".")
-            );
-            total += numericPrice;
-        });
+                // Parsing sicuro del prezzo (rimuove € e . nei decimali)
+                const numericPrice = parseFloat(
+                    product.price.replace("€", "").replace(".", "").replace(",", ".")
+                );
+                total += numericPrice;
+            });
 
-        // 🔥 Mostra il totale con due decimali
-        document.getElementById("total").innerHTML = `Totale: €${total.toFixed(2)}`;
-    }
-});
+            // Mostra il totale con due decimali
+            document.getElementById("total").innerHTML = `Totale: €${total.toFixed(2)}`;
+        }
+    });
 
     // Funzione per svuotare il carrello
     function clearCart() {
         localStorage.removeItem("cart");
         location.reload();
+    }
+
+    // Funzione per procedere al pagamento
+    function proceedToPayment() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        if (cart.length > 0) {
+            // Passa i dati del carrello alla pagina di pagamento
+            localStorage.setItem("paymentCart", JSON.stringify(cart));
+            window.location.href = "pagamento.html"; // Reindirizza alla pagina di pagamento
+        } else {
+            alert("Il carrello è vuoto. Aggiungi articoli per procedere al pagamento.");
+        }
     }
 </script>
 
